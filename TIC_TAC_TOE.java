@@ -1,18 +1,16 @@
-import java.util.Scanner;
+#include <iostream>
+#include <vector>
+#include <limits>
 
-public class TicTacToe {
-    private char[][] board;
-    private char currentPlayer;
-    private boolean againstComputer;
+using namespace std;
 
-    public TicTacToe(boolean againstComputer) {
-        board = new char[3][3];
-        currentPlayer = 'X';
-        this.againstComputer = againstComputer;
-        initializeBoard();
-    }
+class TicTacToe {
+private:
+    vector<vector<char>> board;
+    char currentPlayer;
+    bool againstComputer;
 
-    public void initializeBoard() {
+    void initializeBoard() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 board[row][col] = '-';
@@ -20,19 +18,19 @@ public class TicTacToe {
         }
     }
 
-    public void printBoard() {
-        System.out.println("-------------");
+    void printBoard() {
+        cout << "-------------" << endl;
         for (int row = 0; row < 3; row++) {
-            System.out.print("| ");
+            cout << "| ";
             for (int col = 0; col < 3; col++) {
-                System.out.print(board[row][col] + " | ");
+                cout << board[row][col] << " | ";
             }
-            System.out.println();
-            System.out.println("-------------");
+            cout << endl;
+            cout << "-------------" << endl;
         }
     }
 
-    public boolean isBoardFull() {
+    bool isBoardFull() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 if (board[row][col] == '-') {
@@ -43,61 +41,57 @@ public class TicTacToe {
         return true;
     }
 
-    public boolean hasWon(char player) {
+    bool hasWon(char player) {
+        // Check rows and columns
         for (int i = 0; i < 3; i++) {
             if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
                 return true;
             }
-
             if (board[0][i] == player && board[1][i] == player && board[2][i] == player) {
                 return true;
             }
         }
-
+        // Check diagonals
         if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
             return true;
         }
-
         if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
             return true;
         }
-
         return false;
     }
 
-    public boolean isValidMove(int row, int col) {
+    bool isValidMove(int row, int col) {
         if (row < 0 || row >= 3 || col < 0 || col >= 3) {
             return false;
         }
         return board[row][col] == '-';
     }
 
-    public boolean makeMove(int row, int col) {
+    bool makeMove(int row, int col) {
         if (isValidMove(row, col)) {
             board[row][col] = currentPlayer;
             currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    public void makeComputerMove() {
-        int[] bestMove = findBestMove();
-        makeMove(bestMove[0], bestMove[1]);
+    void makeComputerMove() {
+        pair<int, int> bestMove = findBestMove();
+        makeMove(bestMove.first, bestMove.second);
     }
 
-    private int evaluate(char player) {
+    int evaluate(char player) {
         if (hasWon(player)) {
             return 1;
         } else if (hasWon((player == 'X') ? 'O' : 'X')) {
             return -1;
-        } else {
-            return 0;
         }
+        return 0;
     }
 
-    private int minimax(char player, int depth, boolean isMaximizingPlayer) {
+    int minimax(char player, int depth, bool isMaximizingPlayer) {
         int score = evaluate(player);
 
         if (score == 1 || score == -1) {
@@ -109,14 +103,14 @@ public class TicTacToe {
         }
 
         if (isMaximizingPlayer) {
-            int bestScore = Integer.MIN_VALUE;
+            int bestScore = numeric_limits<int>::min();
 
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
                     if (isValidMove(row, col)) {
                         board[row][col] = player;
                         int currentScore = minimax(player, depth + 1, false);
-                        bestScore = Math.max(bestScore, currentScore);
+                        bestScore = max(bestScore, currentScore);
                         board[row][col] = '-';
                     }
                 }
@@ -124,14 +118,14 @@ public class TicTacToe {
 
             return bestScore;
         } else {
-            int bestScore = Integer.MAX_VALUE;
+            int bestScore = numeric_limits<int>::max();
 
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
                     if (isValidMove(row, col)) {
                         board[row][col] = player;
                         int currentScore = minimax(player, depth + 1, true);
-                        bestScore = Math.min(bestScore, currentScore);
+                        bestScore = min(bestScore, currentScore);
                         board[row][col] = '-';
                     }
                 }
@@ -141,21 +135,20 @@ public class TicTacToe {
         }
     }
 
-    private int[] findBestMove() {
-        int bestScore = Integer.MIN_VALUE;
-        int[] bestMove = new int[] { -1, -1 };
+    pair<int, int> findBestMove() {
+        int bestScore = numeric_limits<int>::min();
+        pair<int, int> bestMove = {-1, -1};
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 if (isValidMove(row, col)) {
                     board[row][col] = currentPlayer;
                     int currentScore = minimax(currentPlayer, 0, false);
+                    board[row][col] = '-';
                     if (currentScore > bestScore) {
                         bestScore = currentScore;
-                        bestMove[0] = row;
-                        bestMove[1] = col;
+                        bestMove = {row, col};
                     }
-                    board[row][col] = '-';
                 }
             }
         }
@@ -163,55 +156,62 @@ public class TicTacToe {
         return bestMove;
     }
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+public:
+    TicTacToe(bool againstComputer) : board(3, vector<char>(3)), currentPlayer('X'), againstComputer(againstComputer) {
+        initializeBoard();
+    }
 
-        System.out.println("Welcome to Tic Tac Toe!");
-        System.out.print("Do you want to play against another player? (y/n): ");
-        String choice = scanner.nextLine();
+    void play() {
+        while (!hasWon('X') && !hasWon('O') && !isBoardFull()) {
+            printBoard();
 
-        boolean againstComputer = !choice.equalsIgnoreCase("y");
-
-        TicTacToe game = new TicTacToe(againstComputer);
-
-        while (!game.hasWon('X') && !game.hasWon('O') && !game.isBoardFull()) {
-            game.printBoard();
-
-            if (game.againstComputer && game.currentPlayer == 'O') {
-                System.out.println("Computer's turn:");
-                game.makeComputerMove();
+            if (againstComputer && currentPlayer == 'O') {
+                cout << "Computer's turn:" << endl;
+                makeComputerMove();
             } else {
-                boolean validMove = false;
+                bool validMove = false;
                 while (!validMove) {
-                    System.out.print("Player " + game.currentPlayer + ", enter your move (row column): ");
-                    int row = scanner.nextInt();
-                    int col = scanner.nextInt();
-                    validMove = game.makeMove(row, col);
+                    cout << "Player " << currentPlayer << ", enter your move (row column): ";
+                    int row, col;
+                    cin >> row >> col;
+                    validMove = makeMove(row, col);
                     if (!validMove) {
-                        System.out.println("This cell is already taken. Please choose another one.");
+                        cout << "This cell is already taken or invalid. Please choose another one." << endl;
                     }
                 }
             }
         }
 
-        game.printBoard();
+        printBoard();
 
-        if (game.hasWon('X')) {
-            if (game.againstComputer) {
-                System.out.println("You win!");
+        if (hasWon('X')) {
+            if (againstComputer) {
+                cout << "Player X wins!" << endl;
             } else {
-                System.out.println("Player X wins!");
+                cout << "Player X wins!" << endl;
             }
-        } else if (game.hasWon('O')) {
-            if (game.againstComputer) {
-                System.out.println("Computer wins!");
+        } else if (hasWon('O')) {
+            if (againstComputer) {
+                cout << "Computer wins!" << endl;
             } else {
-                System.out.println("Player O wins!");
+                cout << "Player O wins!" << endl;
             }
         } else {
-            System.out.println("It's a draw!");
+            cout << "It's a draw!" << endl;
         }
-
-        scanner.close();
     }
+};
+
+int main() {
+    cout << "Welcome to Tic Tac Toe!" << endl;
+    cout << "Do you want to play against another player? (y/n): ";
+    char choice;
+    cin >> choice;
+
+    bool againstComputer = (choice == 'n' || choice == 'N');
+
+    TicTacToe game(againstComputer);
+    game.play();
+
+    return 0;
 }

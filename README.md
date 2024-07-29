@@ -1,8 +1,6 @@
 # Tic Tac Toe
 
-Welcome to the Tic Tac Toe game repository! This repository contains a Java implementation of the classic game Tic Tac Toe. The program allows users to play against another player or challenge the computer AI. It provides an interactive interface, intelligent computer moves, and win detection to ensure an enjoyable gaming experience.
-
-- The source code can be found in the `TicTacToe.java` file in the `TicTacToe` folder of the repository.
+Welcome to the Tic Tac Toe game repository! This repository contains a C++ implementation of the classic game Tic Tac Toe. The program offers the option to play against another player or challenge the computer AI. It features an interactive interface, intelligent computer moves, and win detection to provide an engaging gaming experience.
 
 ## Features
 
@@ -14,7 +12,7 @@ Welcome to the Tic Tac Toe game repository! This repository contains a Java impl
 
 ## How to Play
 
-1. Run the Java program to start the game.
+1. Run the C++ program to start the game.
 2. Choose whether you want to play against another player or challenge the computer AI.
 3. If playing against another player, take turns entering your moves by specifying the row and column of your choice.
 4. If playing against the computer, enter your moves as prompted while the computer player makes intelligent moves.
